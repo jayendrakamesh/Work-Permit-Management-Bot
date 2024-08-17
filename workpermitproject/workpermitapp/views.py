@@ -7,6 +7,7 @@ import telepot
 from telegram.ext import Application, CommandHandler, CallbackContext, CallbackQueryHandler, MessageHandler, filters, ContextTypes, ConversationHandler
 from PIL import Image, ImageDraw, ImageFont
 from django.templatetags.static import static
+from datetime import datetime, timedelta, timezone
 
 
 # Initialize the bot with your token
@@ -91,11 +92,22 @@ async def create_entry(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
     return ASKING_QUESTIONS_SET1
 
+ist_offset = timedelta(hours=5, minutes,30)
+ist_timezone = timezone(ist_offset)
+
+def get_current_ist_time():
+    current_time_ist = datetime.now(ist_timezone)
+    date_time_ist = current_time_ist.strftime("%Y-%m-%d %I:%M:%S %p")
+    return date_time_ist
+
 async def ask_questions_set1(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Ask all the questions from set 1 sequentially."""
     user_id = update.effective_user.id
     response = update.message.text
     user_responses[user_id].append(response)
+    current_time = get_current_ist_time()
+    user_responses[user_id].append(current_time)   
+     
 
     if len(user_responses[user_id]) < len(questions1):
         next_question = questions1[len(user_responses[user_id])]
